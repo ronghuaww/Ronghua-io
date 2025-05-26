@@ -62,10 +62,14 @@ function self:ClientAwake()
   GetCoinsPosRequest:FireServer(floorScale, floorPos)
 
   GetCoinsPosResponse:Connect(function(coins)
+    local count = 0
     for key, value in pairs(coins) do
-  
+
       local coinPos = Vector3.new(value.XPos, 0, value.ZPos)
-      if coinPos then SpawnCoin(key, coinPos, value.Value) end -- If the spawn point is valid, spawn a coin there
+      if coinPos then 
+        count += 1
+        SpawnCoin(key, coinPos, value.Value) 
+      end -- If the spawn point is valid, spawn a coin there
     end
   end)
 
@@ -96,7 +100,7 @@ function PopulateScene(floorScale, floorPos)
     }
 
     table.insert(coins, coin)
-    Storage.SetValue("Coins" .. tostring(i), coin) 
+    Storage.SetValue("Coin " .. tostring(i), coin) 
   end
   return coins
 end
@@ -147,13 +151,13 @@ function self:ServerAwake()
             storageCoins = PopulateScene(floorScale, floorPos)
           end
 
-          GetCoinsPosResponse:FireAllClients(storageCoins)
+          GetCoinsPosResponse:FireClient(player, storageCoins)
 
         end
       end)
     end
 
-    Search("Coins", 10, "")
+    Search("Coin ", InitialCoinCount, "")
 
   end)
 
@@ -198,7 +202,7 @@ function self:ServerAwake()
       end)
     end
 
-    Search(id, 10, "")
+    Search(id, InitialCoinCount, "")
 
   end)
   
@@ -206,5 +210,3 @@ function self:ServerAwake()
 
 
 end
-
-
