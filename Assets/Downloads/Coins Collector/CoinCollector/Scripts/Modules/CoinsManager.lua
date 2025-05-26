@@ -70,7 +70,7 @@ function self:ClientAwake()
   RemoveCoinResponse:Connect(function(id)
     print(client.localPlayer.name, tostring(spawnedCoins[id].transform.position))
     GameObject.Destroy(spawnedCoins[id])
-    --spawnedCoins[id] = nil 
+    spawnedCoins[id] = nil 
   end)
 
 
@@ -110,49 +110,53 @@ end
 -- Function to handle server initialization
 function self:ServerAwake()
 
+  Timer.Every(1, function()
+
+  end)
+
   -- Listen for coin Positions from clients
   GetCoinsPosRequest:Connect(function(player, floorScale, floorPos)
 
-  local count = 0 
-  local storageCoins = {}
-  function Search(key: string, limit: number, cursorId: string)
-    Storage.SearchValue(key, limit, cursorId, function(data, newCursorId, errorCode)
-      if(data == nil) then
-        print(`Got error {StorageError[errorCode]} while searching`)
-        return
-      end
-      
-      for index, entry in data do
-        for key, value in entry do
-          if value.Dirty == false then 
-            -- name as the key and its value as the value
-            local coin = {
-                Value = value.Value, 
-                XPos = value.XPos, 
-                ZPos = value.ZPos, 
-              }
-            storageCoins[key] = coin
-            count += 1
-          end 
+    local count = 0 
+    local storageCoins = {}
+    function Search(key: string, limit: number, cursorId: string)
+      Storage.SearchValue(key, limit, cursorId, function(data, newCursorId, errorCode)
+        if(data == nil) then
+          print(`Got error {StorageError[errorCode]} while searching`)
+          return
         end
-      end
-      
-      if(newCursorId ~= nil) then
-        Search(key, limit, newCursorId)
-      else
---print("done")
-        if count == 0 then 
-         -- print("there is nothing") 
-          storageCoins = PopulateScene(floorScale, floorPos)
+        
+        for index, entry in data do
+          for key, value in entry do
+            if value.Dirty == false then 
+              -- name as the key and its value as the value
+              local coin = {
+                  Value = value.Value, 
+                  XPos = value.XPos, 
+                  ZPos = value.ZPos, 
+                }
+              storageCoins[key] = coin
+              count += 1
+            end 
+          end
         end
+        
+        if(newCursorId ~= nil) then
+          Search(key, limit, newCursorId)
+        else
+  --print("done")
+          if count == 0 then 
+          -- print("there is nothing") 
+            storageCoins = PopulateScene(floorScale, floorPos)
+          end
 
-        GetCoinsPosResponse:FireAllClients(storageCoins)
+          GetCoinsPosResponse:FireAllClients(storageCoins)
 
-      end
-    end)
-  end
+        end
+      end)
+    end
 
-  Search("Coins", 10, "")
+    Search("Coins", 10, "")
 
   end)
 
