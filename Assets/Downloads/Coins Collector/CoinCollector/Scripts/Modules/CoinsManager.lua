@@ -3,12 +3,13 @@
 
 local GetCoinsPosRequest = Event.new("GetCoinsPosRequest")
 local GetCoinsPosResponse = Event.new("GetCoinsPosResponse")
-local RemoveCoinRequest = Event.new("RemoveCoinRequest")
-local RemoveCoinResponse = Event.new("RemoveCoinResponse")
+local RemoveCoinEvent = Event.new("RemoveCoinEvent")
 
 --!SerializeField
 local InitialCoinCount : number = 25 
 local MaxCoinValue : number = 50
+local MinCoinScale : number = 0.3
+local MaxCoinScale : number = 5
 
 --!SerializeField
 --local Coins : { Transform } = nil -- Array of Transform objects for coin spawn points, initialized to nil
@@ -28,7 +29,8 @@ local spawnedCoins = {} -- Table to keep track of currently spawned coins
 function SpawnCoin(id: string, position: Vector3, value: number)
   local coin = Object.Instantiate(CoinPrefab) -- Create a new coin instance from the prefab
   coin.transform.position = position -- Set the coin's position to the specified position
-  coin.transform.localScale = Vector3.new(value/5, value/5, value/5)   
+  local scaleRatio = MinCoinScale + (MaxCoinScale * value/MaxCoinValue)
+  coin.transform.localScale = Vector3.new(scaleRatio, scaleRatio, scaleRatio)    
 
   local coinInfo = coin.GetComponent(coin, CoinCollectorScript)
   if coinInfo ~= nil then
@@ -40,9 +42,9 @@ end
 
 -- Function to destroy a coin and respawn it after a delay
 function DestroyCoin(coinObj: GameObject, id: string)
-  spawnedCoins[id] = nil 
-  RemoveCoinRequest:FireServer(id, coinObj)
+  RemoveCoinEvent:FireServer(id, coinObj)
   GameObject.Destroy(coinObj)
+  spawnedCoins[id] = nil 
   --coin:SetActive(false) -- Deactivate the coin to simulate destruction 
   --DestroyCoinRequest:FireServer(coin.id)  
 end
@@ -65,12 +67,6 @@ function self:ClientAwake()
       local coinPos = Vector3.new(value.XPos, 0, value.ZPos)
       if coinPos then SpawnCoin(key, coinPos, value.Value) end -- If the spawn point is valid, spawn a coin there
     end
-  end)
-
-  RemoveCoinResponse:Connect(function(id)
-    print(client.localPlayer.name, tostring(spawnedCoins[id].transform.position))
-    GameObject.Destroy(spawnedCoins[id])
-    spawnedCoins[id] = nil 
   end)
 
 
@@ -110,9 +106,9 @@ end
 -- Function to handle server initialization
 function self:ServerAwake()
 
-  Timer.Every(1, function()
+  -- Timer.Every(1, function()
 
-  end)
+  -- end)
 
   -- Listen for coin Positions from clients
   GetCoinsPosRequest:Connect(function(player, floorScale, floorPos)
@@ -134,6 +130,7 @@ function self:ServerAwake()
                   Value = value.Value, 
                   XPos = value.XPos, 
                   ZPos = value.ZPos, 
+                  Dirty = false
                 }
               storageCoins[key] = coin
               count += 1
@@ -145,7 +142,7 @@ function self:ServerAwake()
           Search(key, limit, newCursorId)
         else
   --print("done")
-          if count == 0 then 
+          if count < 10 then 
           -- print("there is nothing") 
             storageCoins = PopulateScene(floorScale, floorPos)
           end
@@ -164,7 +161,7 @@ function self:ServerAwake()
 
 
 
-  RemoveCoinRequest:Connect(function(player, id, coinObj)
+  RemoveCoinEvent:Connect(function(player, id, coinObj)
     print("in event destorying", id)
 
     function Search(key: string, limit: number, cursorId: string)
@@ -177,7 +174,7 @@ function self:ServerAwake()
         
         for index, entry in data do
           for key, value in entry do
-            if key == id and value.Dirty == false then 
+            if key == id then 
             foundBool = true
             -- found the coin in the game 
             -- delete it 
@@ -185,19 +182,10 @@ function self:ServerAwake()
               Value = value.Value, 
               XPos = value.XPos, 
               ZPos = value.ZPos, 
-              dirty = true
+              Dirty = true
             }
 
             Storage.SetValue(key, coin)
-            RemoveCoinResponse:FireAllClients(id)
-            --spawnedCoins[id] = nil 
-
-            -- Storage.DeleteValue(key, function(errorCode)
-            --   print(`The error code was {StorageError[errorCode]}`)
-            --   print("deleteed", id)
-            --   -- RemoveCoinResponse:FireAllClients(id)
-            -- end)
-            
             end 
           end
         end
@@ -211,7 +199,6 @@ function self:ServerAwake()
     end
 
     Search(id, 10, "")
-
 
   end)
   

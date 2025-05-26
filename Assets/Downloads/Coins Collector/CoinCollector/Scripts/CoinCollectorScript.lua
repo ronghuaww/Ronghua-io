@@ -31,6 +31,8 @@ function self:Awake()
     local playerCharacter = other.gameObject:GetComponent(Character) -- Get the Character component from the other game object
     if playerCharacter == nil then return end -- If the other game object does not have a Character component, exit the function
     
+    coinsManager.DestroyCoin(self.gameObject, _id) -- Destroy the coin game object that this script is attached to
+
     local player = playerCharacter.player -- Get the player associated with the character
     if client.localPlayer == player then -- Check if the local player is the same as the player associated with the character
       print("plaer is not nil")
@@ -39,7 +41,7 @@ function self:Awake()
       end
 
      -- coinsTracker.AddCoins(Amount) -- Add the specified amount of coins to the player's total
-      coinsManager.DestroyCoin(self.gameObject, _id) -- Destroy the coin game object that this script is attached to
+      --coinsManager.DestroyCoin(self.gameObject, _id) -- Destroy the coin game object that this script is attached to
     end
   end
 end
