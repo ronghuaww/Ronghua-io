@@ -68,6 +68,7 @@ function self:ClientAwake()
   end)
 
   RemoveCoinResponse:Connect(function(id)
+    print(client.localPlayer.name, tostring(spawnedCoins[id].transform.position))
     GameObject.Destroy(spawnedCoins[id])
     --spawnedCoins[id] = nil 
   end)
