@@ -1,0 +1,62 @@
+:root {
+  --primary-color: #DEF9C4; /* Primary color used in the design, commented out */
+  --secondary-color: #9CDBA6; /* Secondary color for accents and highlights */
+  --third-color: #50B498; /* Third color for additional accents */
+  --fourth-color: #468585; /* Background color for the leaderboard container */
+}
+
+.coins-leaderboard {
+  display: flex; /* Use flexbox layout */
+  width: 30%; /* Full width of the container */
+  height: 30%; /* Full height of the container */
+  background-color: var(--fourth-color); /* Background color from root variables */
+  padding: 10px; /* Padding inside the container */
+  border-radius: 20px; /* Rounded corners */
+  overflow: hidden; /* Hide any content that overflows the container */
+}
+
+.header {
+  display: flex; /* Use flexbox layout */
+  width: 100%; /* Full width of the header */
+  align-items: center; /* Center align items vertically */
+  justify-content: center; /* Center align items horizontally */
+  color: var(--primary-color); /* Text color from root variables */
+  text-shadow: -1px 2px 0px rgba(0, 0, 0, .4); /* Shadow effect for text */
+  -unity-font-definition: var(--font-black); /* Font definition (Unity specific) */
+  font-size: 20px; /* Font size for the header */
+  margin-bottom: 10px; /* Space below the header */
+}
+
+.content {
+  display: flex; /* Use flexbox layout */
+  align-items: center; /* Center align items vertically */
+}
+
+.rank-list {
+  display: flex; /* Use flexbox layout */
+  flex-direction: column; /* Stack items vertically */
+  width: 100%; /* Full width of the rank list */
+}
+
+.rank-item {
+  display: flex; /* Use flexbox layout */
+  justify-content: space-between; /* Space items evenly within the row */
+  flex-direction: row; /* Align items in a row */
+  background-color: rgba(0, 0, 0, 0.4); /* Background color with opacity */
+  margin-bottom: 10px; /* Space below each rank item */
+  font-size: 16px; /* Font size for rank items */
+  padding: 10%; /* Padding inside rank items */
+  width: 100%; /* Full width of the rank item */
+  color: var(--color-fishbase-whitefish); /* Text color for rank items */
+  text-shadow: -3px 5px 0px rgba(0, 0, 0, .4); /* Shadow effect for text */
+  -unity-font-definition: var(--font-bold); /* Font definition (Unity specific) */
+  border-radius: 10px; /* Rounded corners for rank items */
+}
+
+.rank-label {
+  color: var(--secondary-color); /* Text color from root variables */
+}
+
+.name-label {
+  margin-left: 1px; /* Space to the left of the name label */
+}

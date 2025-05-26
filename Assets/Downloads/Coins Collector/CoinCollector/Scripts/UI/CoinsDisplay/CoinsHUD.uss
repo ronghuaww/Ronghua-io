@@ -1,0 +1,39 @@
+.coins-h-u-d {
+  display: flex; /* Use flexbox layout */
+  position: absolute; /* Position the element absolutely relative to its containing block */
+  align-items: center; /* Center-align items vertically */
+  width: 100%; /* Set the width of the container */
+  bottom: 15%; /* Aligned to the bottom */
+
+}
+
+.coins-hud-container {
+  overflow: hidden; /* Hide any content that overflows the container */
+  flex-direction: row; /* Arrange child elements in a row */
+  align-items: center; /* Center-align items vertically */
+  justify-content: space-between; /* Distribute space between child elements */
+  
+  width: 100px; /* Set the width of the container */
+  height: 36px; /* Set the height of the container */
+  
+  color: #cccada; /* Set text color */
+  font-size: 18px; /* Set the font size */
+  -unity-font-definition: var(--font-black); /* Font definition (Unity specific) */
+  -unity-text-align: middle-right; /* Text alignment (Unity specific) */
+  
+  border-bottom-left-radius: 8px; /* Rounded corners for the bottom-left corner */
+  border-top-left-radius: 8px; /* Rounded corners for the top-left corner */
+  border-top-right-radius: 8px; /* Rounded corners for the top-right corner */
+  border-bottom-right-radius: 8px; /* Rounded corners for the bottom-right corner */
+  
+  padding: 0 12px; /* Padding on the left and right sides of the container */
+}
+
+.coins-icon {
+  width: 25px; /* Set the width of the icon */
+  height: 25px; /* Set the height of the icon */
+}
+
+.coins-text {
+  margin-right: 0; /* Remove any margin on the right side of the text */
+}
