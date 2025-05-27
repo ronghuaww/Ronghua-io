@@ -11,6 +11,12 @@ local MaxCoinValue : number = 50
 local MinCoinScale : number = 0.3
 local MaxCoinScale : number = 5
 
+local IdLength : number = 10
+
+local FloorScale : Vector3 = Vector3.new(10, 0, 10)
+local FloorPos : Vector3 = Vector3.new(0, 0.5, 0)
+
+
 --!SerializeField
 --local Coins : { Transform } = nil -- Array of Transform objects for coin spawn points, initialized to nil
 
@@ -57,9 +63,7 @@ end
 
 -- Function to handle client initialization
 function self:ClientAwake()
-  local floorScale = self.transform.localScale
-  local floorPos = self.transform.position
-  GetCoinsPosRequest:FireServer(floorScale, floorPos)
+  GetCoinsPosRequest:FireServer()
 
   GetCoinsPosResponse:Connect(function(coins)
     local count = 0
@@ -81,16 +85,17 @@ end
     SERVER
 ]]
 
-function PopulateScene(floorScale, floorPos)
+function PopulateScene(numCoin: number)
   coins = {}
-  for i = 1, InitialCoinCount, 1 do
+  for i = 1, numCoin, 1 do
+    local coinId = Mathf.Pow(10, IdLength)
     local coinValue = math.random(1, MaxCoinValue)
 
     local xPos = (math.random() * 2) - 1
-    xPos = (xPos * floorScale.x) + floorPos.x
+    xPos = (xPos * FloorScale.x) + FloorPos.x
 
     local zPos = (math.random() * 2) - 1
-    zPos = (zPos * floorScale.z) + floorPos.z
+    zPos = (zPos * FloorScale.z) + FloorPos.z
 
     local coin = {
       Value = coinValue, 
@@ -100,10 +105,8 @@ function PopulateScene(floorScale, floorPos)
     }
 
     table.insert(coins, coin)
-    Storage.SetValue("Coin " .. tostring(i), coin) 
+    Storage.SetValue("CoinId" .. tostring(coinId), coin) 
   end
-  Storage.SetValue("TotalCoins", InitialCoinCount)
-
   return coins
 end
 
@@ -112,9 +115,13 @@ end
 -- Function to handle server initialization
 function self:ServerAwake()
 
-  -- Timer.Every(1, function()
+  Timer.Every(10, function()
+    local storageCoins = {}
+    print("new coins")
+    storageCoins = PopulateScene(3)
+    GetCoinsPosResponse:FireAllClients(storageCoins)
 
-  -- end)
+  end) 
 
   -- Listen for coin Positions from clients
   GetCoinsPosRequest:Connect(function(player, floorScale, floorPos)
@@ -150,19 +157,16 @@ function self:ServerAwake()
   --print("done")
           if count < 10 then 
           -- print("there is nothing") 
-            storageCoins = PopulateScene(floorScale, floorPos)
+            storageCoins = PopulateScene(InitialCoinCount)
           end
 
           GetCoinsPosResponse:FireClient(player, storageCoins)
-          Storage.SetValue("TotalCoins", count)
-
-          
 
         end
       end)
     end
 
-    Search("Coin ", InitialCoinCount, "")
+    Search("CoinId", InitialCoinCount, "")
 
   end)
 
