@@ -88,12 +88,10 @@ function self:ClientAwake()
 
 
 
-    print("deleting")
     -- delete 
     -- loop through the list 
     local count = 0
     for i = 1, #oldCoins do 
-      print("deleted", tostring(oldCoins[i]))
         GameObject.Destroy(oldCoins[i])
       count += 1
     end 

@@ -27,7 +27,7 @@ namespace Highrise.Lua.Generated
         public override string ScriptGUID => s_scriptGUID;
 
         [SerializeField] public System.String m_LeaderboardTitle = "Leaderboard";
-        [SerializeField] public System.Double m_UpdateInterval = 3;
+        [SerializeField] public System.Double m_UpdateInterval = 1;
 
         protected override SerializedPropertyValue[] SerializeProperties()
         {

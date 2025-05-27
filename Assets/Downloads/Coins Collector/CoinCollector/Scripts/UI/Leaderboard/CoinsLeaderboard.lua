@@ -4,7 +4,7 @@
 local LeaderboardTitle : string = "Leaderboard" -- Title for the leaderboard UI, initialized with the string "Leaderboard"
 
 --!SerializeField
-local UpdateInterval : number = 3 -- seconds -- Interval in seconds to update the leaderboard
+local UpdateInterval : number = 1 -- seconds -- Interval in seconds to update the leaderboard
 
 --!Bind
 local _Title : UILabel = nil -- UILabel for displaying the leaderboard title, initialized to nil

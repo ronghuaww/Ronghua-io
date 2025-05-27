@@ -22,6 +22,37 @@ local function TrackPlayers(game, callBack)
         coins = 0 -- Start with 0 coins
       }
   end)
+
+  game.PlayerDisconnected:Connect(function(player)
+
+    local indexTopPlayer = -1
+    for i = 1, #topPlayers do
+      if topPlayers[i].name == player.name then 
+        indexTopPlayer = i
+        break
+      end 
+    end 
+
+    if indexTopPlayer ~= -1 then 
+      table.remove(topPlayers, indexTopPlayer)
+    end
+
+    local indexPlayer = -1
+    for i = 1, #players do
+      if players[i].name == player.name then 
+        indexPlayer = i
+        break
+      end 
+    end 
+
+    if indexPlayer ~= -1 then 
+      table.remove(players, indexPlayer)
+    end
+    
+
+    print("remove player")
+
+  end)
 end
 
 -- Function to add coins to the local player's total
