@@ -20,7 +20,7 @@ using UnityEditor;
 namespace Highrise.Lua.Generated
 {
     [AddComponentMenu("Lua/CoinsSpawner")]
-    [LuaRegisterType(0x1440eab511baa3c4, typeof(LuaBehaviour))]
+    [LuaRegisterType(0xf1fc2718501447d7, typeof(LuaBehaviour))]
     public class CoinsSpawner : LuaBehaviourThunk
     {
         private const string s_scriptGUID = "a3294022af59651428cd614340d2556a";

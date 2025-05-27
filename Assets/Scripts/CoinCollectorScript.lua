@@ -12,8 +12,8 @@ local CoinsTracker = require("CoinsTracker") -- Require the CoinsTracker module 
 local CoinsSpawner = require("CoinsSpawner") -- Require the CoinsSpawner module to handle coin spawning and destruction
 
 -- Function to updatee the id and worth of coin 
-InitializeCoinValues = function(id: string, value: number)
-  id = id
+InitializeCoinValues = function(coinId: string, value: number)
+  id = coinId
   worth = value
 end
 
