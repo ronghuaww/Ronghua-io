@@ -102,6 +102,8 @@ function PopulateScene(floorScale, floorPos)
     table.insert(coins, coin)
     Storage.SetValue("Coin " .. tostring(i), coin) 
   end
+  Storage.SetValue("TotalCoins", InitialCoinCount)
+
   return coins
 end
 
@@ -152,6 +154,9 @@ function self:ServerAwake()
           end
 
           GetCoinsPosResponse:FireClient(player, storageCoins)
+          Storage.SetValue("TotalCoins", count)
+
+          
 
         end
       end)
