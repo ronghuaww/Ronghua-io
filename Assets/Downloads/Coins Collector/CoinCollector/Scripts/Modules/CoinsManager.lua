@@ -13,7 +13,7 @@ local MaxCoinValue : number = 50
 local MinCoinScale : number = 0.3
 local MaxCoinScale : number = 5
 
-local IdLength : number = 10
+local MaxIdLength : number = 6
 
 local FloorScale : Vector3 = Vector3.new(10, 0, 10)
 local FloorPos : Vector3 = Vector3.new(0, 0.5, 0)
@@ -107,9 +107,16 @@ function self:ClientAwake()
     GetCoinsPosRequest:FireServer()  
   end) 
 
-  SpawnNewCoinsEvent:Connect(function(coins)
-    PopulateScene(coins)
-  end)
+  -- SpawnNewCoinsEvent:Connect(function(coins)
+  --   GetCoinsPosRequest:FireServer()
+  -- end)
+
+  -- Timer.Every(10, function()
+  --   local storageCoins = {}
+  --   print("new coins")
+  --   storageCoins = GenerateCoinsData(3)
+  --   GetCoinsPosRequest:FireServer()
+  -- end) 
 
 
 end
@@ -122,7 +129,7 @@ end
 function GenerateCoinsData(numCoin: number)
   coins = {}
   for i = 1, numCoin, 1 do
-    local coinId = Mathf.Pow(10, IdLength)
+    local coinId = math.random(1, Mathf.Pow(10, MaxIdLength))
     local coinValue = math.random(1, MaxCoinValue)
 
     local xPos = (math.random() * 2) - 1
@@ -149,12 +156,12 @@ end
 -- Function to handle server initialization
 function self:ServerAwake()
 
-  -- Timer.Every(10, function()
-  --   local storageCoins = {}
-  --   print("new coins")
-  --   storageCoins = GenerateCoinsData(3)
-  --   SpawnNewCoinsEvent:FireAllClients(storageCoins)
-  -- end) 
+  Timer.Every(10, function()
+    local storageCoins = {}
+    print("new coins")
+    storageCoins = GenerateCoinsData(3)
+    -- SpawnNewCoinsEvent:FireAllClients()
+  end) 
 
 
   -- Listen for coin Positions from clients

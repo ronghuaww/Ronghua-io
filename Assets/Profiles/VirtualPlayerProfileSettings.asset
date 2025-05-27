@@ -17,3 +17,4 @@ MonoBehaviour:
   _virtualPlayerProfiles:
   - {fileID: 11400000, guid: 439616461b1abdc43b949aa27284462f, type: 2}
   - {fileID: 11400000, guid: 61bcd76821e331d4797eef0f900f1a54, type: 2}
+  - {fileID: 11400000, guid: 83ef8e3daacee13498be4807c79b48fe, type: 2}
