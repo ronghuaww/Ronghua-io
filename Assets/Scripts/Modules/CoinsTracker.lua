@@ -25,6 +25,9 @@ local function TrackPlayers(game, callBack)
 
   game.PlayerDisconnected:Connect(function(player)
 
+    -- print("before", #players, #topPlayers)
+
+
     local indexTopPlayer = -1
     for i = 1, #topPlayers do
       if topPlayers[i].name == player.name then 
@@ -48,9 +51,16 @@ local function TrackPlayers(game, callBack)
     if indexPlayer ~= -1 then 
       table.remove(players, indexPlayer)
     end
-    
 
-    print("remove player")
+    -- print("before", #players, #topPlayers)
+
+    -- players[player.name] = nil
+    -- topPlayers[player.name] = nil
+
+    -- print("after", #players, #topPlayers)
+
+
+    -- print("remove player")
 
   end)
 end
@@ -170,6 +180,7 @@ function self:ServerAwake()
     Storage.GetValue("TopPlayers", function(oldList)
       
       local newList = {}
+      if oldList == nil then return end 
       for index, entry in oldList do
         if entry.name ~= player.name then
           
@@ -202,4 +213,9 @@ function self:ServerAwake()
     end)
   end)
 
+end
+
+function self:ServerOnDestroy()
+  print("server bye bye")
+  Storage.DeleteValue("TopPlayers")
 end
