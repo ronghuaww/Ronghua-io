@@ -30,9 +30,7 @@ function self:Awake()
     local player = playerCharacter.player -- Get the player associated with the character
     print(player.name, "interacted with a coin worth", worth)
 
-
     if client.localPlayer == player then -- Check if the local player is the same as the player associated with the character
-      print("plaer is not nil")
       if CoinSound ~= nil then -- If CoinSound is not nil (i.e., a sound has been assigned)
         Audio:PlayShader(CoinSound) -- Play the coin collection sound effect
       end

@@ -247,7 +247,4 @@ function self:ServerOnDestroy()
   for i = 1, #dirtyCoinsNames do 
     Storage.DeleteValue(dirtyCoinsNames[i]) -- remove every dirty values from storage
   end 
-
-
 end
-

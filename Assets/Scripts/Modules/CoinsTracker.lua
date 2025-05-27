@@ -16,18 +16,18 @@ local topPlayers = {} -- Table to store the top players' information
 
 -- Function to track players in the game and set up character change callbacks
 local function TrackPlayers(game, callBack)
-  game.PlayerConnected:Connect(function(player) -- Connect to the PlayerConnected event
+  -- Connect to the PlayerConnected event
+  game.PlayerConnected:Connect(function(player) 
       players[player.name] = { -- Initialize player data
         playerName = player.name,
         coins = 0 -- Start with 0 coins
       }
   end)
 
+  -- Connect to the PlayerDisconnected event
   game.PlayerDisconnected:Connect(function(player)
 
-    -- print("before", #players, #topPlayers)
-
-
+    -- searching the player from the topPlayers list 
     local indexTopPlayer = -1
     for i = 1, #topPlayers do
       if topPlayers[i].name == player.name then 
@@ -36,10 +36,12 @@ local function TrackPlayers(game, callBack)
       end 
     end 
 
+    -- removing the player from the topPlayers list 
     if indexTopPlayer ~= -1 then 
       table.remove(topPlayers, indexTopPlayer)
     end
 
+    -- searching the player from the topPlayers list 
     local indexPlayer = -1
     for i = 1, #players do
       if players[i].name == player.name then 
@@ -48,20 +50,10 @@ local function TrackPlayers(game, callBack)
       end 
     end 
 
+    -- removing the player from the player list 
     if indexPlayer ~= -1 then 
       table.remove(players, indexPlayer)
     end
-
-    -- print("before", #players, #topPlayers)
-
-    -- players[player.name] = nil
-    -- topPlayers[player.name] = nil
-
-    -- print("after", #players, #topPlayers)
-
-
-    -- print("remove player")
-
   end)
 end
 
@@ -94,18 +86,6 @@ function self:ClientAwake()
 
   GetTopPlayersRequest:FireServer(0)
 
-  --GetTopPlayersRequest:FireServer() -- Request the top players from the server
-  
-  -- GetCoinsRequest:FireServer() -- Request the local player's coin count from the server
-
-  -- all players start from the same count at the start of the game 
-  -- GetCoinsResponse:Connect(function(coins)
-  --   local player = client.localPlayer -- Get the local player
-  --   players[player.name].coins = coins -- Update the player's coin count
-
-  --   CoinsUI.PopulateCoins(coins) -- Update the UI to show the new coin count
-  -- end)
-
   GetTopPlayersResponse:Connect(function(newTopPlayers)
     topPlayers = newTopPlayers -- Update the list of top players
   end)
@@ -122,14 +102,8 @@ function self:ServerAwake()
     topPlayers = k -- Load the top players from storage
   end)
 
-  -- GetCoinsRequest:Connect(function(player)
-  --   Storage.GetPlayerValue(player, "Coins", function(value)
-  --     if value == nil then value = 0 end -- Default coin value if not found
-  --     players[player.name].coins = value -- Update the player's coin count
-  --     GetCoinsResponse:FireClient(player, value) -- Respond to the client with the coin count
-  --   end)
-  -- end)
 
+  -- Listen for updated coin info reequests from clients
   UpdateCoinsEvent:Connect(function(player, coins)
     local playerInfo = players[player.name] -- Get the player's information
     
@@ -174,25 +148,21 @@ function self:ServerAwake()
     Storage.SetValue("TopPlayers", topPlayers) -- Save the updated top players list to storage
   end)
 
+  -- Listen for get top players reequests from clients
   GetTopPlayersRequest:Connect(function(player, totalCoins)
 
-    print("geting top players")
-    Storage.GetValue("TopPlayers", function(oldList)
+    Storage.GetValue("TopPlayers", function(oldList) -- grabbing the top players from storage
       
       local newList = {}
       if oldList == nil then oldList = newList end 
       for index, entry in oldList do
         if entry.name ~= player.name then
-          
-          print("we found her")
-          table.insert(newList, entry)
+          table.insert(newList, entry) -- grabbing all the other players
         end
       end
-
       
       local playerInfo = {name = player.name, coins = totalCoins}
-      table.insert(newList, playerInfo)
-
+      table.insert(newList, playerInfo) -- adding player starting at zero
 
       topPlayers = newList -- Load the top players from storage
 
@@ -205,17 +175,15 @@ function self:ServerAwake()
         table.insert(topPlayersToSend, topPlayers[i]) -- Add the top players to send
       end
       
-      print("Sending top players") -- Log sending top players
+      print("Sending top players...") -- Log sending top players
       GetTopPlayersResponse:FireAllClients(topPlayersToSend) -- Respond to all clients with the top players
       Storage.SetValue("TopPlayers", topPlayers) -- Save the updated top players list to storage
-
-
     end)
   end)
 
 end
 
+-- Function to handle server Destroy
 function self:ServerOnDestroy()
-  print("server bye bye")
-  Storage.DeleteValue("TopPlayers")
+  Storage.DeleteValue("TopPlayers") -- remove topPlayers from storage
 end
