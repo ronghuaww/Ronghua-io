@@ -5,6 +5,8 @@ local GetCoinsPosRequest = Event.new("GetCoinsPosRequest")
 local GetCoinsPosResponse = Event.new("GetCoinsPosResponse")
 local RemoveCoinEvent = Event.new("RemoveCoinEvent")
 
+local SpawnNewCoinsEvent = Event.new("SpawnNewCoinsEvent")
+
 --!SerializeField
 local InitialCoinCount : number = 25 
 local MaxCoinValue : number = 50
@@ -33,6 +35,7 @@ local spawnedCoins = {} -- Table to keep track of currently spawned coins
 
 -- Function to spawn a coin at a specific position
 function SpawnCoin(id: string, position: Vector3, value: number)
+
   local coin = Object.Instantiate(CoinPrefab) -- Create a new coin instance from the prefab
   coin.transform.position = position -- Set the coin's position to the specified position
   local scaleRatio = MinCoinScale + (MaxCoinScale * value/MaxCoinValue)
@@ -56,25 +59,56 @@ function DestroyCoin(coinObj: GameObject, id: string)
 end
 
 
-
+  
 --[[
     CLIENT
 ]]
 
--- Function to handle client initialization
-function self:ClientAwake()
-  GetCoinsPosRequest:FireServer()
-
-  GetCoinsPosResponse:Connect(function(coins)
+function PopulateScene(coinData)
     local count = 0
-    for key, value in pairs(coins) do
 
+    for key, value in pairs(coinData) do
       local coinPos = Vector3.new(value.XPos, 0, value.ZPos)
       if coinPos then 
         count += 1
         SpawnCoin(key, coinPos, value.Value) 
       end -- If the spawn point is valid, spawn a coin there
     end
+end
+
+-- Function to handle client initialization
+function self:ClientAwake()
+  GetCoinsPosRequest:FireServer()
+
+  GetCoinsPosResponse:Connect(function(coins)
+
+    local oldCoins = GameObject.FindGameObjectsWithTag("Coin")
+
+    PopulateScene(coins)
+
+
+
+    print("deleting")
+    -- delete 
+    -- loop through the list 
+    local count = 0
+    for i = 1, #oldCoins do 
+      print("deleted", tostring(oldCoins[i]))
+        GameObject.Destroy(oldCoins[i])
+      count += 1
+    end 
+    print(count, "number of coins in the scene")
+
+
+  end)
+
+
+  Timer.Every(5, function()
+    GetCoinsPosRequest:FireServer()  
+  end) 
+
+  SpawnNewCoinsEvent:Connect(function(coins)
+    PopulateScene(coins)
   end)
 
 
@@ -85,7 +119,7 @@ end
     SERVER
 ]]
 
-function PopulateScene(numCoin: number)
+function GenerateCoinsData(numCoin: number)
   coins = {}
   for i = 1, numCoin, 1 do
     local coinId = Mathf.Pow(10, IdLength)
@@ -115,13 +149,13 @@ end
 -- Function to handle server initialization
 function self:ServerAwake()
 
-  Timer.Every(10, function()
-    local storageCoins = {}
-    print("new coins")
-    storageCoins = PopulateScene(3)
-    GetCoinsPosResponse:FireAllClients(storageCoins)
+  -- Timer.Every(10, function()
+  --   local storageCoins = {}
+  --   print("new coins")
+  --   storageCoins = GenerateCoinsData(3)
+  --   SpawnNewCoinsEvent:FireAllClients(storageCoins)
+  -- end) 
 
-  end) 
 
   -- Listen for coin Positions from clients
   GetCoinsPosRequest:Connect(function(player, floorScale, floorPos)
@@ -154,10 +188,11 @@ function self:ServerAwake()
         if(newCursorId ~= nil) then
           Search(key, limit, newCursorId)
         else
-  --print("done")
-          if count < 10 then 
+  --print("done"
+          print("grab from storage", count)
+          if count == 0 then 
           -- print("there is nothing") 
-            storageCoins = PopulateScene(InitialCoinCount)
+            storageCoins = GenerateCoinsData(InitialCoinCount)
           end
 
           GetCoinsPosResponse:FireClient(player, storageCoins)

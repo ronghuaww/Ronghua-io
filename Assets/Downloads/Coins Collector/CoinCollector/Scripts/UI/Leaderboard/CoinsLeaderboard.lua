@@ -14,12 +14,7 @@ local _rankList : VisualElement = nil -- VisualElement for displaying the list o
 
 local CoinsTracker = require("CoinsTracker") -- Require the CoinsTracker module to track and fetch player coins
 
--- Function to initialize the UI elements
-function Insitialize()
-  _Title:SetPrelocalizedText(tostring(LeaderboardTitle)) -- Set the title text of the leaderboard to the LeaderboardTitle value
-end
 
-Insitialize() -- Call the initialization function
 
 -- Function to update the leaderboard with the top players
 function UpdateLeaderboard(TopPlayers)
@@ -61,6 +56,15 @@ function UpdateLeaderboard(TopPlayers)
     _rankList:Add(rankItem) -- Add the rank item to the rank list
   end
 end
+
+-- Function to initialize the UI elements
+function Insitialize()
+  _Title:SetPrelocalizedText(tostring(LeaderboardTitle)) -- Set the title text of the leaderboard to the LeaderboardTitle value
+  UpdateLeaderboard(CoinsTracker.GetTopPlayers())
+end
+
+Insitialize() -- Call the initialization function
+
 
 -- Schedule the leaderboard update function to run every UpdateInterval seconds
 Timer.Every(UpdateInterval, function()
