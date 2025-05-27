@@ -26,7 +26,6 @@ namespace Highrise.Lua.Generated
         private const string s_scriptGUID = "3256fecbdab993743bca6a863e6032d9";
         public override string ScriptGUID => s_scriptGUID;
 
-        [SerializeField] public System.String _id = "";
         [SerializeField] public System.Double m_Amount = 1;
 
         protected override SerializedPropertyValue[] SerializeProperties()
@@ -36,8 +35,7 @@ namespace Highrise.Lua.Generated
 
             return new SerializedPropertyValue[]
             {
-                CreateSerializedProperty(_script.GetPropertyAt(0), _id),
-                CreateSerializedProperty(_script.GetPropertyAt(1), m_Amount),
+                CreateSerializedProperty(_script.GetPropertyAt(0), m_Amount),
             };
         }
         

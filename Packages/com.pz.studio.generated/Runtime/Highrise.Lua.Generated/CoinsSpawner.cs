@@ -27,11 +27,13 @@ namespace Highrise.Lua.Generated
         public override string ScriptGUID => s_scriptGUID;
 
         [SerializeField] public UnityEngine.GameObject m_coinPrefab = default;
-        [SerializeField] public System.Double m_maxCoinValue = 50;
+        [SerializeField] public System.Double m_maxCoinWorth = 50;
         [SerializeField] public System.Double m_minCoinScale = 0.3;
         [SerializeField] public System.Double m_maxCoinScale = 5;
         [SerializeField] public UnityEngine.Vector3 m_floorScale = new Vector3(10f, 0f, 10f);
         [SerializeField] public UnityEngine.Vector3 m_floorPos = new Vector3(0f, 0.5f, 0f);
+        [SerializeField] public System.Double m_syncSceneTimer = 5;
+        [SerializeField] public System.Double m_spawnCoinsTimer = 10;
 
         protected override SerializedPropertyValue[] SerializeProperties()
         {
@@ -41,11 +43,13 @@ namespace Highrise.Lua.Generated
             return new SerializedPropertyValue[]
             {
                 CreateSerializedProperty(_script.GetPropertyAt(0), m_coinPrefab),
-                CreateSerializedProperty(_script.GetPropertyAt(1), m_maxCoinValue),
+                CreateSerializedProperty(_script.GetPropertyAt(1), m_maxCoinWorth),
                 CreateSerializedProperty(_script.GetPropertyAt(2), m_minCoinScale),
                 CreateSerializedProperty(_script.GetPropertyAt(3), m_maxCoinScale),
                 CreateSerializedProperty(_script.GetPropertyAt(4), m_floorScale),
                 CreateSerializedProperty(_script.GetPropertyAt(5), m_floorPos),
+                CreateSerializedProperty(_script.GetPropertyAt(6), m_syncSceneTimer),
+                CreateSerializedProperty(_script.GetPropertyAt(7), m_spawnCoinsTimer),
             };
         }
         

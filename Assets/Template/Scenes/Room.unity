@@ -812,10 +812,10 @@ MonoBehaviour:
     rid: -2
   m_coinPrefab: {fileID: 2068103529785702131, guid: 9c7fb821d34fe2e418d18006fac2cfb3,
     type: 3}
-  m_maxCoinValue: 50
+  m_maxCoinWorth: 50
   m_minCoinScale: 0.3
   m_maxCoinScale: 3
-  m_floorScale: {x: 25, y: 0, z: 25}
+  m_floorScale: {x: 90, y: 0, z: 90}
   m_floorPos: {x: 0, y: 0.5, z: 0}
   references:
     version: 2

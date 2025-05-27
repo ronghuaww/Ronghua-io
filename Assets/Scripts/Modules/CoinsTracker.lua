@@ -180,7 +180,7 @@ function self:ServerAwake()
     Storage.GetValue("TopPlayers", function(oldList)
       
       local newList = {}
-      if oldList == nil then return end 
+      if oldList == nil then oldList = newList end 
       for index, entry in oldList do
         if entry.name ~= player.name then
           
