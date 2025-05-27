@@ -40,7 +40,7 @@ function self:Awake()
         Audio:PlayShader(CoinSound) -- Play the coin collection sound effect
       end
 
-     -- coinsTracker.AddCoins(Amount) -- Add the specified amount of coins to the player's total
+     coinsTracker.AddCoins(Amount) -- Add the specified amount of coins to the player's total
       --coinsManager.DestroyCoin(self.gameObject, _id) -- Destroy the coin game object that this script is attached to
     end
   end

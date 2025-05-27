@@ -4,7 +4,7 @@
 local LeaderboardTitle : string = "Leaderboard" -- Title for the leaderboard UI, initialized with the string "Leaderboard"
 
 --!SerializeField
-local UpdateInterval : number = 10 -- seconds -- Interval in seconds to update the leaderboard
+local UpdateInterval : number = 3 -- seconds -- Interval in seconds to update the leaderboard
 
 --!Bind
 local _Title : UILabel = nil -- UILabel for displaying the leaderboard title, initialized to nil
@@ -14,7 +14,12 @@ local _rankList : VisualElement = nil -- VisualElement for displaying the list o
 
 local CoinsTracker = require("CoinsTracker") -- Require the CoinsTracker module to track and fetch player coins
 
+-- Function to initialize the UI elements
+function Insitialize()
+  _Title:SetPrelocalizedText(tostring(LeaderboardTitle)) -- Set the title text of the leaderboard to the LeaderboardTitle value
+end
 
+Insitialize() -- Call the initialization function
 
 -- Function to update the leaderboard with the top players
 function UpdateLeaderboard(TopPlayers)
@@ -56,15 +61,6 @@ function UpdateLeaderboard(TopPlayers)
     _rankList:Add(rankItem) -- Add the rank item to the rank list
   end
 end
-
--- Function to initialize the UI elements
-function Insitialize()
-  _Title:SetPrelocalizedText(tostring(LeaderboardTitle)) -- Set the title text of the leaderboard to the LeaderboardTitle value
-  UpdateLeaderboard(CoinsTracker.GetTopPlayers())
-end
-
-Insitialize() -- Call the initialization function
-
 
 -- Schedule the leaderboard update function to run every UpdateInterval seconds
 Timer.Every(UpdateInterval, function()
